@@ -26,7 +26,7 @@
         <a href="#student-app">Student app</a>
         <a
           class="nav-download"
-          href="https://github.com/kmcdata25-netizen/kasarani-app-releases/releases/download/v1.0.1/Kasarani_Music_Center_v1.0.1_b2.apk"
+          href="https://github.com/kmcdata25-netizen/kasarani-app-releases/releases/download/v1.0.2/Kasarani_Music_Center_v1.0.2_b3.apk"
           download
           data-apk-download
         >
@@ -56,7 +56,7 @@
             <a class="button button--primary" href="#programmes">Explore programmes</a>
             <a
               class="button button--light"
-              href="https://github.com/kmcdata25-netizen/kasarani-app-releases/releases/download/v1.0.1/Kasarani_Music_Center_v1.0.1_b2.apk"
+              href="https://github.com/kmcdata25-netizen/kasarani-app-releases/releases/download/v1.0.2/Kasarani_Music_Center_v1.0.2_b3.apk"
               download
               data-apk-download
             >
@@ -204,14 +204,14 @@
 
           <div class="app-download-card">
             <div class="app-download-card__meta">
-              <span class="app-badge">Official Release v1.0.1</span>
+              <span class="app-badge">Official Release v1.0.2</span>
               <span class="app-meta-item">Android APK &bull; 66.3 MB</span>
               <span class="app-meta-item">Auto-Updating</span>
             </div>
             
             <a
               class="button button--primary student-app__button"
-              href="https://github.com/kmcdata25-netizen/kasarani-app-releases/releases/download/v1.0.1/Kasarani_Music_Center_v1.0.1_b2.apk"
+              href="https://github.com/kmcdata25-netizen/kasarani-app-releases/releases/download/v1.0.2/Kasarani_Music_Center_v1.0.2_b3.apk"
               download
               data-apk-download
             >
@@ -246,6 +246,62 @@
         <p class="site-footer__copy">&copy; 2026 Kasarani Music Center</p>
       </div>
     </footer>
+
+    <!-- KMC AI Assistant Floating Widget ("Maestro") -->
+    <div class="chat-widget" id="chat-widget">
+      <!-- Floating Launch Button -->
+      <button class="chat-launcher" id="chat-launcher" type="button" aria-label="Open KMC AI Music Assistant" aria-expanded="false">
+        <span class="chat-launcher__icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </span>
+        <span class="chat-launcher__badge">Ask Maestro</span>
+      </button>
+
+      <!-- Chat Modal Card -->
+      <section class="chat-window" id="chat-window" aria-hidden="true" role="dialog" aria-labelledby="chat-title">
+        <header class="chat-header">
+          <div class="chat-header__info">
+            <div class="chat-avatar">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18V5l12-2v13"></path>
+                <circle cx="6" cy="18" r="3"></circle>
+                <circle cx="18" cy="16" r="3"></circle>
+              </svg>
+            </div>
+            <div>
+              <h3 id="chat-title">Maestro</h3>
+              <p class="chat-status"><span class="status-dot"></span> KMC AI Tutor &bull; Active</p>
+            </div>
+          </div>
+          <button class="chat-close" id="chat-close" type="button" aria-label="Close chat">&times;</button>
+        </header>
+
+        <div class="chat-messages" id="chat-messages" role="log" aria-live="polite">
+          <!-- Messages will be injected dynamically -->
+        </div>
+
+        <div class="chat-quick-chips" id="chat-quick-chips" aria-label="Quick questions">
+          <button type="button" class="quick-chip" data-query="Tuition Fees & Packages">Tuition Fees</button>
+          <button type="button" class="quick-chip" data-query="Instruments Taught">Instruments</button>
+          <button type="button" class="quick-chip" data-query="School Location & Hours">Location & Hours</button>
+          <button type="button" class="quick-chip" data-query="ABRSM & Trinity Exams">Exams (ABRSM)</button>
+          <button type="button" class="quick-chip" data-query="How to Enroll">How to Enroll</button>
+          <button type="button" class="quick-chip" data-query="Contact Kasarani Music Center">Contact Office</button>
+        </div>
+
+        <form class="chat-input-bar" id="chat-form">
+          <input type="text" id="chat-input" placeholder="Ask about lessons, fees, practice..." autocomplete="off" required>
+          <button type="submit" id="chat-send" aria-label="Send message">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </form>
+      </section>
+    </div>
 
     <script src="script.js"></script>
   </body>
