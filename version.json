@@ -1,8 +1,8 @@
 {
-  "latest_version": "1.0.1",
-  "latest_build_number": 2,
-  "apk_url": "https://github.com/kmcdata25-netizen/kasarani-app-releases/releases/download/v1.0.1/Kasarani_Music_Center_v1.0.1_b2.apk",
-  "release_notes": "v1.0.1 — Kasarani Music Center Rebrand\n- Complete KMS to KMC naming alignment across the app\n- Enriched landing page with Who We Are, Programme Highlights, Why KMC, and Testimonials sections\n- Improved UI polish and const optimizations",
+  "latest_version": "1.0.2",
+  "latest_build_number": 3,
+  "apk_url": "https://github.com/kmcdata25-netizen/kasarani-app-releases/releases/download/v1.0.2/Kasarani_Music_Center_v1.0.2_b3.apk",
+  "release_notes": "v1.0.2 — Kasarani Music Center AI Assistant & Core Upgrade\n- Integrated Maestro: Official KMC AI Music Tutor powered by Google Gemini\n- Complete KMC Knowledge Base with tuition fees, departments, and admissions\n- Guest and in-app AI chat access\n- Hardened Supabase authentication and 6-digit verification code system",
   "force_update": false
 }
 
