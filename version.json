@@ -1,7 +1,7 @@
 {
-  "latest_version": "1.0.6",
-  "latest_build_number": 7,
-  "apk_url": "https://github.com/kmcdata25-netizen/kasarani-app-releases/releases/download/v1.0.6/Kasarani_Music_Center_v1.0.6_b7.apk",
-  "release_notes": "v1.0.6 - Kasarani Music Center Live In-App Update Test\n- Verified high-speed chunked OTA download engine\n- Mobile carrier User-Agent and automatic byte-range resumption\n- One-tap browser download fallback\n- Official branded receipts with unboxed KMS logo and slate gray seal stamp",
+  "latest_version": "1.0.7",
+  "latest_build_number": 8,
+  "apk_url": "https://github.com/kmcdata25-netizen/kasarani-app-releases/releases/download/v1.0.7/Kasarani_Music_Center_v1.0.7_b8.apk",
+  "release_notes": "v1.0.7 - Kasarani Music Center Student App Update\n- Clean single-pass in-app OTA download engine\n- Proactive unknown sources install permission setup on first launch\n- Official branded PDF receipts with unboxed KMS logo and slate gray rubber seal stamp\n- Direct PDF receipt download to phone storage with instant document opening\n- Supabase multi-device cloud sync for student enrollments and M-Pesa transaction history\n- Automated offline recovery and performance enhancements",
   "force_update": false
 }
