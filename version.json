@@ -2,6 +2,6 @@
   "latest_version": "1.0.3",
   "latest_build_number": 4,
   "apk_url": "https://github.com/kmcdata25-netizen/kasarani-app-releases/releases/download/v1.0.3/Kasarani_Music_Center_v1.0.3_b4.apk",
-  "release_notes": "v1.0.3 — Kasarani Music Center Student App Update\n- Logical Student Admission ID (KMC-YYYY-XXXX) across student profiles and PDF receipts\n- Wrong password isolation: credential errors no longer trigger verification prompts\n- Proactive notification permissions on app launch and install\n- Resilient over-the-air update installer with offline completion recovery",
+  "release_notes": "v1.0.3 - Kasarani Music Center Student App Update\n- Logical Student Admission ID (KMC-YYYY-XXXX) across student profiles and PDF receipts\n- Wrong password isolation: credential errors no longer trigger verification prompts\n- Proactive notification permissions on app launch and install\n- Resilient over-the-air update installer with offline completion recovery",
   "force_update": false
 }
