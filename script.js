@@ -45,7 +45,7 @@
       if (data.latest_version) {
         const badge = document.querySelector('.app-badge');
         if (badge) {
-          badge.textContent = `Official Release v${data.latest_version}`;
+          badge.textContent = `Official Release v${data.latest_version}${data.latest_build_number ? ` (Build ${data.latest_build_number})` : ''}`;
         }
       }
     })
@@ -119,6 +119,11 @@
         answer: 'Enrollment is open year-round for all ages (kids from 4+, teens, adults, and worship teams)!\n1. Download our Android student app on this page\n2. Create an account and verify your email\n3. Select your course and complete payment via M-Pesa to book your teacher.\nBeginners are warmly welcomed!'
       },
       {
+        id: 'app',
+        keywords: ['app', 'student app', 'apk', 'download', 'android', 'live class', 'virtual', 'online lesson', 'masterclass', 'features', 'tuner', 'metronome'],
+        answer: 'The KMC Android Student App (v1.0.10) is your complete pocket conservatory:\n• Native Live Virtual Studio: Join real-time interactive masterclasses powered by custom Agora RTC with 48kHz acoustic audio & Raise Hand live participation\n• Direct M-Pesa Checkout: Instant fee settlements via Safaricom Daraja STK Push with downloadable branded PDF receipts\n• Musician Tools: Built-in precision chromatic tuner and multi-tempo digital metronome\n• Curriculum Tracking: ABRSM & Trinity syllabus progression and weekly teacher evaluation notes\n• Real-time Academy Alerts: Direct notifications for live classes and school bulletins.\nDownload the official APK directly from this page!'
+      },
+      {
         id: 'contact',
         keywords: ['contact', 'phone', 'email', 'call', 'reach', 'whatsapp', 'office', 'admin'],
         answer: 'You can reach Kasarani Music Center directly:\n• Email: kmcdata25@gmail.com\n• Location: Kasarani, Nairobi (off Thika Road corridor)\n• Hours: Monday – Saturday, 8:00 AM – 7:00 PM\nWe look forward to welcoming you to the KMC family!'
@@ -178,6 +183,7 @@
         'Music Production & Sound Engineering (Studio Director Kimani), DJ Arts, Music Theory (Dean Wanjala), African Dance. ' +
         'Fees: 1-on-1 private lesson KSh 1,000/hr, 4-session starter bundle KSh 3,800, full term courses KSh 8,000–20,000. ' +
         'Exams: ABRSM, Trinity, Rockschool. Payments via M-Pesa. Open Monday-Saturday 8 AM - 7 PM. ' +
+        'Student App: Official Android app v1.0.10 (Build 15) features custom Agora RTC live virtual masterclasses with Raise Hand mode, in-app M-Pesa payment with PDF receipts, tuner, metronome, and syllabus tracking. ' +
         'Provide helpful, inspiring, concise answers. Avoid decorative emojis.';
 
       const payload = {
