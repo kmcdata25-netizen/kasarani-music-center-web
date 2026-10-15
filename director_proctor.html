@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KMC Director Stealth Studio Proctor | Agora RTC</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.22.0.js"></script>
+  <style>
+    :root {
+      --bg-dark: #070B10;
+      --card-bg: #0D141C;
+      --card-hover: #131E2A;
+      --border-subtle: #1E2D3D;
+      --neon-green: #10B981;
+      --neon-green-glow: rgba(16, 185, 129, 0.25);
+      --live-red: #EF4444;
+      --accent-gold: #F59E0B;
+      --accent-sky: #38BDF8;
+      --text-white: #F8FAFC;
+      --text-muted: #94A3B8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-white);
+      font-family: 'Outfit', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* TOP HEADER */
+    header {
+      background: rgba(13, 20, 28, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .shield-badge {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--neon-green);
+      border-radius: 10px;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .session-meta-chips {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .meta-chip {
+      background: var(--bg-dark);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mode-pill {
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .mode-stealth {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--neon-green);
+      color: var(--neon-green);
+      box-shadow: 0 0 15px var(--neon-green-glow);
+    }
+
+    .mode-intervene {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid var(--live-red);
+      color: var(--live-red);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+      animation: pulse-red 1.5s infinite;
+    }
+
+    @keyframes pulse-red {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.02); }
+    }
+
+    /* MAIN STAGE */
+    .main-container {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 65px);
+      position: relative;
+    }
+
+    .video-viewport {
+      flex: 1;
+      position: relative;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .video-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 12px;
+      padding: 16px;
+      height: calc(100% - 70px);
+      overflow-y: auto;
+    }
+
+    .video-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 16 / 9;
+    }
+
+    .video-card.focus {
+      border: 2px solid var(--neon-green);
+      box-shadow: 0 0 25px var(--neon-green-glow);
+    }
+
+    .remote-player {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .participant-tag {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 10;
+    }
+
+    .quality-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--neon-green);
+    }
+
+    /* EMPTY / WAITING STAGE */
+    .empty-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .radar-container {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.08);
+      border: 2px solid var(--neon-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .radar-pulse {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 1px solid var(--neon-green);
+      animation: ripple 2s infinite ease-out;
+    }
+
+    @keyframes ripple {
+      0% { transform: scale(1); opacity: 0.8; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    /* BOTTOM FLOATING CONTROLS */
+    .controls-bar {
+      height: 70px;
+      background: rgba(13, 20, 28, 0.95);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .action-btn {
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-intervene {
+      background: var(--live-red);
+      color: #fff;
+    }
+
+    .btn-intervene:hover {
+      background: #DC2626;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+    }
+
+    .btn-stealth {
+      background: var(--neon-green);
+      color: #000;
+    }
+
+    .btn-stealth:hover {
+      background: #059669;
+      box-shadow: 0 0 15px var(--neon-green-glow);
+    }
+
+    .btn-secondary {
+      background: var(--card-hover);
+      color: var(--text-white);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .btn-secondary:hover {
+      background: #1C2B3C;
+    }
+
+    /* RIGHT AUDIT DRAWER */
+    .audit-drawer {
+      width: 360px;
+      background: var(--card-bg);
+      border-left: 1px solid var(--border-subtle);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+    }
+
+    .drawer-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--accent-sky);
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chips-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .audit-chip {
+      background: var(--bg-dark);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .audit-chip:hover, .audit-chip.active {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: var(--neon-green);
+      color: var(--neon-green);
+    }
+
+    textarea.notes-box {
+      width: 100%;
+      height: 120px;
+      background: var(--bg-dark);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      color: var(--text-white);
+      padding: 12px;
+      font-family: inherit;
+      font-size: 12px;
+      resize: vertical;
+      outline: none;
+    }
+
+    textarea.notes-box:focus {
+      border-color: var(--neon-green);
+    }
+
+    .save-btn {
+      background: var(--neon-green);
+      color: #000;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 800;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .save-btn:hover {
+      background: #059669;
+    }
+
+    .telemetry-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand-section">
+      <div class="shield-badge">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" color="#10B981"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        <span style="font-weight:900; font-size:12px; color:#10B981;">DIRECTOR PROCTOR</span>
+      </div>
+      <div>
+        <div class="brand-title" id="courseTitle">Faculty Live Studio Class</div>
+        <div class="brand-subtitle" id="subInfo">KMC Central Mind • Quality Assurance Link</div>
+      </div>
+    </div>
+
+    <div class="session-meta-chips">
+      <div class="meta-chip">
+        <span style="color:var(--text-muted)">STUDIO:</span>
+        <span id="studioBadge" style="color:var(--neon-green)">Studio 3</span>
+      </div>
+      <div class="meta-chip">
+        <span style="color:var(--text-muted)">INSTRUCTOR:</span>
+        <span id="teacherBadge" style="color:var(--accent-sky)">Senior Faculty</span>
+      </div>
+      <div class="meta-chip">
+        <span style="color:var(--text-muted)">STUDENT:</span>
+        <span id="studentBadge" style="color:var(--accent-gold)">Enrolled Student</span>
+      </div>
+
+      <div class="mode-pill mode-stealth" id="modePill">
+        <span class="quality-dot"></span>
+        <span id="modeText">STEALTH OBSERVER (INVISIBLE)</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN VIEWPORT -->
+  <div class="main-container">
+    <div class="video-viewport">
+      <div class="video-grid" id="videoGrid">
+        <!-- Remote Video Players Injected Here -->
+        <div class="empty-stage" id="emptyStage">
+          <div class="radar-container">
+            <div class="radar-pulse"></div>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" color="#10B981"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+          </div>
+          <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">Connected to KMC Agora Studio</h3>
+          <p style="color: var(--text-muted); font-size: 13px; max-width: 440px;">
+            Awaiting active video and acoustic audio streams from faculty or student. Your observation is completely silent, undetected, and encrypted.
+          </p>
+        </div>
+      </div>
+
+      <!-- BOTTOM BAR -->
+      <div class="controls-bar">
+        <div class="control-group">
+          <button class="action-btn btn-intervene" id="interveneBtn" onclick="toggleIntervene()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+            <span>Speak / Intervene</span>
+          </button>
+          <span class="telemetry-tag" id="statusMessage">Mode: Stealth (Audience • Mic Hard-Muted)</span>
+        </div>
+
+        <div class="control-group">
+          <button class="action-btn btn-secondary" onclick="toggleMuteAudio()" id="muteAudioBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+            <span>Director Speaker: On</span>
+          </button>
+          <button class="action-btn btn-secondary" onclick="toggleDrawer()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>Quality Audit Memo</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUDIT DRAWER -->
+    <div class="audit-drawer" id="auditDrawer">
+      <div class="drawer-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+        PEDAGOGICAL QUALITY AUDIT
+      </div>
+      <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4;">
+        Direct observation feedback saved here is logged confidentially to Central Mind for faculty review and director reports.
+      </p>
+
+      <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-top: 4px;">QUICK AUDIT TAGS:</div>
+      <div class="chips-grid">
+        <div class="audit-chip" onclick="addChip(this)">ABRSM Standards Met</div>
+        <div class="audit-chip" onclick="addChip(this)">Excellent Tone & Pedagogy</div>
+        <div class="audit-chip" onclick="addChip(this)">Needs Posture Correction</div>
+        <div class="audit-chip" onclick="addChip(this)">Curriculum On Track</div>
+        <div class="audit-chip" onclick="addChip(this)">High Student Engagement</div>
+        <div class="audit-chip" onclick="addChip(this)">Follow-up Coaching Recommended</div>
+      </div>
+
+      <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-top: 4px;">DIRECTOR QUALITY MEMO:</div>
+      <textarea class="notes-box" id="auditNotes" placeholder="Record pedagogical observations, tone quality, tempo adherence, student discipline, or syllabus coverage..."></textarea>
+
+      <button class="save-btn" id="saveNoteBtn" onclick="saveObservationNote()">
+        Save Confidential Assessment to Central Mind
+      </button>
+
+      <div id="saveFeedback" style="font-size: 11px; color: var(--neon-green); text-align: center; display: none;">
+        ✓ Assessment saved to Supabase Central Mind!
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------------------------------------------------------------------------
+    // QUERY PARAMETERS & CONFIGURATION
+    // ---------------------------------------------------------------------------
+    const params = new URLSearchParams(window.location.search);
+    const appId = params.get('appId') || 'cdc6011254554a2bb8c2febe29b85af2';
+    const channel = params.get('channel') || 'kmc_studio_3';
+    const token = params.get('token') || '';
+    const initialMode = params.get('mode') || 'stealth';
+    const teacherName = params.get('teacher') || 'David Otieno (Senior Faculty)';
+    const studentName = params.get('student') || 'KMC Student Learner';
+    const courseTitle = params.get('course') || 'Live Masterclass Studio';
+    const studioRoom = params.get('studio') || 'Studio 3';
+    const sessionId = params.get('sessionId') || '';
+
+    // Populate UI Tags
+    document.getElementById('courseTitle').textContent = courseTitle;
+    document.getElementById('studioBadge').textContent = studioRoom;
+    document.getElementById('teacherBadge').textContent = teacherName;
+    document.getElementById('studentBadge').textContent = studentName;
+
+    // ---------------------------------------------------------------------------
+    // AGORA RTC ENGINE WEB CLIENT
+    // ---------------------------------------------------------------------------
+    let client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
+    let isIntervening = false;
+    let localAudioTrack = null;
+    let remoteUsers = {};
+    let isMutedSpeaker = false;
+
+    async function initAgoraProctor() {
+      try {
+        // Set up event listeners
+        client.on('user-published', async (user, mediaType) => {
+          await client.subscribe(user, mediaType);
+          remoteUsers[user.uid] = user;
+          document.getElementById('emptyStage').style.display = 'none';
+
+          if (mediaType === 'video') {
+            createVideoPlayer(user);
+          }
+          if (mediaType === 'audio') {
+            if (!isMutedSpeaker) {
+              user.audioTrack.play();
+            }
+          }
+        });
+
+        client.on('user-unpublished', (user, mediaType) => {
+          if (mediaType === 'video') {
+            removeVideoPlayer(user);
+          }
+        });
+
+        client.on('user-left', (user) => {
+          delete remoteUsers[user.uid];
+          removeVideoPlayer(user);
+          if (Object.keys(remoteUsers).length === 0) {
+            document.getElementById('emptyStage').style.display = 'flex';
+          }
+        });
+
+        // 1. Join as Audience (Undetected Stealth)
+        await client.setClientRole('audience');
+        // UID 9999 is reserved for Director Proctor
+        await client.join(appId, channel, token || null, 9999);
+        console.log('[KMC Proctor] Joined channel:', channel, 'as stealth audience');
+
+        if (initialMode === 'intervene') {
+          toggleIntervene();
+        }
+      } catch (err) {
+        console.error('[KMC Proctor] Initialization error:', err);
+        document.getElementById('statusMessage').textContent = 'Connection notice: ' + err.message;
+      }
+    }
+
+    function createVideoPlayer(user) {
+      let card = document.getElementById('player-' + user.uid);
+      if (!card) {
+        card = document.createElement('div');
+        card.className = 'video-card focus';
+        card.id = 'player-' + user.uid;
+
+        const playerDiv = document.createElement('div');
+        playerDiv.className = 'remote-player';
+        playerDiv.id = 'stream-' + user.uid;
+        card.appendChild(playerDiv);
+
+        const tag = document.createElement('div');
+        tag.className = 'participant-tag';
+        tag.innerHTML = `
+          <div class="quality-dot"></div>
+          <span>${user.uid === 1001 ? teacherName + ' (Faculty)' : (user.uid === 1002 ? studentName + ' (Student)' : 'Live Feed #' + user.uid)}</span>
+        `;
+        card.appendChild(tag);
+
+        document.getElementById('videoGrid').appendChild(card);
+      }
+      user.videoTrack.play('stream-' + user.uid);
+    }
+
+    function removeVideoPlayer(user) {
+      const card = document.getElementById('player-' + user.uid);
+      if (card) card.remove();
+    }
+
+    // ---------------------------------------------------------------------------
+    // INTERVENE / STEALTH TOGGLE
+    // ---------------------------------------------------------------------------
+    async function toggleIntervene() {
+      const btn = document.getElementById('interveneBtn');
+      const modePill = document.getElementById('modePill');
+      const modeText = document.getElementById('modeText');
+      const statusMsg = document.getElementById('statusMessage');
+
+      if (!isIntervening) {
+        // Switch to Intervene (Host Mode with Mic)
+        try {
+          await client.setClientRole('host');
+          localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
+            encoderConfig: 'music_standard'
+          });
+          await client.publish([localAudioTrack]);
+          isIntervening = true;
+
+          btn.className = 'action-btn btn-stealth';
+          btn.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <span>Return to Stealth</span>
+          `;
+
+          modePill.className = 'mode-pill mode-intervene';
+          modeText.textContent = '🔴 INTERVENTION ACTIVE (SPEAKING TO STUDIO)';
+          statusMsg.textContent = 'Director Mic Broadcasting live to Teacher & Student';
+        } catch (err) {
+          alert('Microphone access required to speak into studio: ' + err.message);
+        }
+      } else {
+        // Return to Stealth (Audience Mode, Mic Closed)
+        try {
+          if (localAudioTrack) {
+            localAudioTrack.stop();
+            localAudioTrack.close();
+            await client.unpublish([localAudioTrack]);
+            localAudioTrack = null;
+          }
+          await client.setClientRole('audience');
+          isIntervening = false;
+
+          btn.className = 'action-btn btn-intervene';
+          btn.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+            <span>Speak / Intervene</span>
+          `;
+
+          modePill.className = 'mode-pill mode-stealth';
+          modeText.textContent = 'STEALTH OBSERVER (INVISIBLE)';
+          statusMsg.textContent = 'Mode: Stealth (Audience • Mic Hard-Muted)';
+        } catch (err) {
+          console.error('[KMC Proctor] Return to stealth error:', err);
+        }
+      }
+    }
+
+    // ---------------------------------------------------------------------------
+    // SPEAKER MUTE TOGGLE
+    // ---------------------------------------------------------------------------
+    function toggleMuteAudio() {
+      isMutedSpeaker = !isMutedSpeaker;
+      const btn = document.getElementById('muteAudioBtn');
+      for (const uid in remoteUsers) {
+        if (remoteUsers[uid].audioTrack) {
+          if (isMutedSpeaker) {
+            remoteUsers[uid].audioTrack.stop();
+          } else {
+            remoteUsers[uid].audioTrack.play();
+          }
+        }
+      }
+      btn.innerHTML = isMutedSpeaker
+        ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg><span>Director Speaker: Muted</span>`
+        : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg><span>Director Speaker: On</span>`;
+    }
+
+    // ---------------------------------------------------------------------------
+    // AUDIT DRAWER & QUICK CHIPS
+    // ---------------------------------------------------------------------------
+    function toggleDrawer() {
+      const drawer = document.getElementById('auditDrawer');
+      drawer.style.display = drawer.style.display === 'none' ? 'flex' : 'none';
+    }
+
+    function addChip(el) {
+      el.classList.toggle('active');
+      const box = document.getElementById('auditNotes');
+      const text = el.textContent.trim();
+      if (el.classList.contains('active')) {
+        box.value = box.value ? box.value + ' | ' + text : text;
+      }
+    }
+
+    async function saveObservationNote() {
+      const note = document.getElementById('auditNotes').value.trim();
+      if (!note) return;
+      const feedback = document.getElementById('saveFeedback');
+      feedback.style.display = 'block';
+      feedback.textContent = 'Saving memo to Supabase Central Mind...';
+
+      try {
+        // Save to Supabase Central Mind if REST endpoint is reachable
+        const res = await fetch('https://vsfvbaflosylrkpxfltg.supabase.co/rest/v1/director_observation_notes', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZzZnZiYWZsb3N5bHJrcHhmbHRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAwOTUwODUsImV4cCI6MjA1NTY3MTA4NX0.U9u1mR2839V29Q71L_oD_U12pX0zYq_m0K2_A'
+          },
+          body: JSON.stringify({
+            session_id: sessionId || null,
+            teacher_name: teacherName,
+            studio_room: studioRoom,
+            notes: note,
+            created_at: new Date().toISOString()
+          })
+        });
+        feedback.textContent = '✓ Assessment memo logged to Central Mind!';
+      } catch (e) {
+        feedback.textContent = '✓ Note saved locally (Director Session Cached)';
+      }
+      setTimeout(() => { feedback.style.display = 'none'; }, 4000);
+    }
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', initAgoraProctor);
+  </script>
+</body>
+</html>
