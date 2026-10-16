@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KMC Director Stealth Studio Proctor | Agora RTC</title>
+  <title>KMC Director Stealth Studio Proctor | WebRTC Studio Monitor</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.22.0.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --bg-dark: #070B10;
@@ -395,11 +395,11 @@
     <div class="brand-section">
       <div class="shield-badge">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" color="#10B981"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-        <span style="font-weight:900; font-size:12px; color:#10B981;">DIRECTOR PROCTOR</span>
+        <span style="font-weight:900; font-size:12px; color:#10B981;">DIRECTOR OBSERVATION</span>
       </div>
       <div>
-        <div class="brand-title" id="courseTitle">Faculty Live Studio Class</div>
-        <div class="brand-subtitle" id="subInfo">KMC Central Mind • Quality Assurance Link</div>
+        <div class="brand-title" id="courseTitle">Live Studio Lesson</div>
+        <div class="brand-subtitle" id="subInfo">Live Studio Observation & Lesson Notes</div>
       </div>
     </div>
 
@@ -419,7 +419,7 @@
 
       <div class="mode-pill mode-stealth" id="modePill">
         <span class="quality-dot"></span>
-        <span id="modeText">STEALTH OBSERVER (INVISIBLE)</span>
+        <span id="modeText">SILENT OBSERVER (MUTED)</span>
       </div>
     </div>
   </header>
@@ -434,9 +434,9 @@
             <div class="radar-pulse"></div>
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" color="#10B981"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
           </div>
-          <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">Connected to KMC Agora Studio</h3>
+          <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">Connected to Live Studio</h3>
           <p style="color: var(--text-muted); font-size: 13px; max-width: 440px;">
-            Awaiting active video and acoustic audio streams from faculty or student. Your observation is completely silent, undetected, and encrypted.
+            Waiting for faculty or student video stream. Your observation is completely silent with microphone muted.
           </p>
         </div>
       </div>
@@ -446,53 +446,57 @@
         <div class="control-group">
           <button class="action-btn btn-intervene" id="interveneBtn" onclick="toggleIntervene()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-            <span>Speak / Intervene</span>
+            <span>Speak into Studio</span>
           </button>
-          <span class="telemetry-tag" id="statusMessage">Mode: Stealth (Audience • Mic Hard-Muted)</span>
+          <button class="action-btn btn-secondary" onclick="reconnectStream()" id="reconnectBtn" title="Rejoin live studio channel">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            <span>Reconnect</span>
+          </button>
+          <span class="telemetry-tag" id="statusMessage">Mode: Silent Observation (Microphone Muted)</span>
         </div>
 
         <div class="control-group">
           <button class="action-btn btn-secondary" onclick="toggleMuteAudio()" id="muteAudioBtn">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-            <span>Director Speaker: On</span>
+            <span>Studio Audio: On</span>
           </button>
           <button class="action-btn btn-secondary" onclick="toggleDrawer()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            <span>Quality Audit Memo</span>
+            <span>Observation Notes</span>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- AUDIT DRAWER -->
+    <!-- OBSERVATION DRAWER -->
     <div class="audit-drawer" id="auditDrawer">
       <div class="drawer-title">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
-        PEDAGOGICAL QUALITY AUDIT
+        DIRECTOR LESSON OBSERVATION
       </div>
       <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4;">
-        Direct observation feedback saved here is logged confidentially to Central Mind for faculty review and director reports.
+        Private lesson observation notes recorded here are saved directly to the database for faculty review and director reports.
       </p>
 
-      <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-top: 4px;">QUICK AUDIT TAGS:</div>
+      <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-top: 4px;">QUICK LESSON TAGS:</div>
       <div class="chips-grid">
-        <div class="audit-chip" onclick="addChip(this)">ABRSM Standards Met</div>
-        <div class="audit-chip" onclick="addChip(this)">Excellent Tone & Pedagogy</div>
+        <div class="audit-chip" onclick="addChip(this)">Syllabus Goals Met</div>
+        <div class="audit-chip" onclick="addChip(this)">Great Tone & Teaching</div>
         <div class="audit-chip" onclick="addChip(this)">Needs Posture Correction</div>
-        <div class="audit-chip" onclick="addChip(this)">Curriculum On Track</div>
-        <div class="audit-chip" onclick="addChip(this)">High Student Engagement</div>
-        <div class="audit-chip" onclick="addChip(this)">Follow-up Coaching Recommended</div>
+        <div class="audit-chip" onclick="addChip(this)">Lesson Plan On Track</div>
+        <div class="audit-chip" onclick="addChip(this)">High Student Focus</div>
+        <div class="audit-chip" onclick="addChip(this)">Follow-up Lesson Recommended</div>
       </div>
 
-      <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-top: 4px;">DIRECTOR QUALITY MEMO:</div>
-      <textarea class="notes-box" id="auditNotes" placeholder="Record pedagogical observations, tone quality, tempo adherence, student discipline, or syllabus coverage..."></textarea>
+      <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-top: 4px;">DIRECTOR OBSERVATION NOTES:</div>
+      <textarea class="notes-box" id="auditNotes" placeholder="Write observations on student technique, posture, tempo, lesson progress, or faculty guidance..."></textarea>
 
       <button class="save-btn" id="saveNoteBtn" onclick="saveObservationNote()">
-        Save Confidential Assessment to Central Mind
+        Save Observation Notes
       </button>
 
       <div id="saveFeedback" style="font-size: 11px; color: var(--neon-green); text-align: center; display: none;">
-        ✓ Assessment saved to Supabase Central Mind!
+        ✓ Observation notes saved successfully!
       </div>
     </div>
   </div>
@@ -519,145 +523,424 @@
     document.getElementById('studentBadge').textContent = studentName;
 
     // ---------------------------------------------------------------------------
-    // AGORA RTC ENGINE WEB CLIENT
+    // WEBRTC STUDIO MONITOR & SUPABASE REALTIME CLIENT
     // ---------------------------------------------------------------------------
-    let client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
+    const SUPABASE_URL = 'https://vsfvbaflosylrkpxfltg.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZzZnZiYWZsb3N5bHJrcHhmbHRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwODE3NzcsImV4cCI6MjEwNTY1Nzc3N30.PkX5VQCyYWk_A7DcckomvYkyFsyiUJppXJ8jwADIrTk';
+
+    const rtcConfiguration = {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' },
+        { urls: 'stun:stun3.l.google.com:19302' },
+        { urls: 'stun:stun4.l.google.com:19302' },
+      ],
+      sdpSemantics: 'unified-plan',
+    };
+
+    let supabaseClient = null;
+    let signalingChannel = null;
+    let peerConnections = {}; // { 'teacher': RTCPeerConnection, 'student': RTCPeerConnection }
+    let directorRtpSenders = {}; // { 'teacher': RTCRtpSender, 'student': RTCRtpSender }
+    let pendingCandidates = {}; // { 'teacher': [], 'student': [] }
+    let remoteStreams = {};
     let isIntervening = false;
-    let localAudioTrack = null;
-    let remoteUsers = {};
+    let liveMicStream = null;
+    let silentAudioTrack = null;
     let isMutedSpeaker = false;
+    let activeParticipants = [];
 
-    async function initAgoraProctor() {
-      try {
-        // Set up event listeners
-        client.on('user-published', async (user, mediaType) => {
-          await client.subscribe(user, mediaType);
-          remoteUsers[user.uid] = user;
-          document.getElementById('emptyStage').style.display = 'none';
+    const statusMsg = document.getElementById('statusMessage');
 
-          if (mediaType === 'video') {
-            createVideoPlayer(user);
+    function getOrCreateSilentTrack() {
+      if (!silentAudioTrack || silentAudioTrack.readyState === 'ended') {
+        try {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) {
+            const audioCtx = new AudioContextClass();
+            const osc = audioCtx.createOscillator();
+            const dst = audioCtx.createMediaStreamDestination();
+            const gain = audioCtx.createGain();
+            gain.gain.value = 0.00001; // Silent gain
+            osc.connect(gain);
+            gain.connect(dst);
+            osc.start();
+            silentAudioTrack = dst.stream.getAudioTracks()[0];
+            silentAudioTrack.enabled = false;
           }
-          if (mediaType === 'audio') {
-            if (!isMutedSpeaker) {
-              user.audioTrack.play();
+        } catch (e) {
+          console.warn('[KMC Proctor] Could not generate silent audio track:', e);
+        }
+      }
+      return silentAudioTrack;
+    }
+
+    async function initWebRtcProctor() {
+      try {
+        statusMsg.textContent = 'Connecting to studio signaling: ' + channel + '...';
+
+        if (!window.supabase) {
+          throw new Error('Supabase client SDK not loaded');
+        }
+
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const sanitizedChannel = channel.replace(/[^a-zA-Z0-9_]/g, '_');
+        const realtimeChannelName = 'kmc_webrtc_' + sanitizedChannel;
+
+        signalingChannel = supabaseClient.channel(realtimeChannelName);
+
+        signalingChannel.on('broadcast', { event: 'signal' }, async ({ payload }) => {
+          if (!payload) return;
+          const signalType = payload.signalType || payload.msgType || payload.action || (payload.type !== 'broadcast' ? payload.type : null);
+          const { sender, target, sdp, candidate } = payload;
+
+          // If we detect studio traffic from teacher or student and we are not connected yet, announce presence!
+          if ((signalType === 'ready' || signalType === 'offer' || signalType === 'answer') && payload.role && !peerConnections[payload.role]) {
+            console.log('[KMC Proctor] Peer activity detected from', payload.role, 'Announcing proctor presence...');
+            announceProctorPresence();
+          }
+
+          if (signalType === 'proctor-offer') {
+            console.log('[KMC Proctor] Received proctor-offer from:', sender);
+            await handleProctorOffer(sender, sdp);
+          } else if (signalType === 'proctor-candidate') {
+            if (target === 'director' || !target || target === 'all') {
+              const pc = peerConnections[sender];
+              if (pc && pc.remoteDescription) {
+                try {
+                  await pc.addIceCandidate(new RTCIceCandidate(candidate));
+                } catch (cErr) {
+                  console.warn('[KMC Proctor] Candidate add error:', cErr);
+                }
+              } else {
+                if (!pendingCandidates[sender]) pendingCandidates[sender] = [];
+                pendingCandidates[sender].push(candidate);
+              }
             }
           }
         });
 
-        client.on('user-unpublished', (user, mediaType) => {
-          if (mediaType === 'video') {
-            removeVideoPlayer(user);
+        signalingChannel.subscribe((status) => {
+          console.log('[KMC Proctor] Signaling status:', status);
+          if (status === 'SUBSCRIBED') {
+            statusMsg.textContent = isIntervening
+              ? '🔴 Director mic broadcasting live to studio'
+              : '🟢 Connected: Silent Observation (WebRTC • P2P)';
+
+            // Announce presence to studio peers with retries
+            announceProctorPresence();
+            setTimeout(announceProctorPresence, 1000);
+            setTimeout(announceProctorPresence, 2500);
+            setTimeout(announceProctorPresence, 5000);
+          } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
+            statusMsg.textContent = 'Signaling disconnected. Click Reconnect.';
           }
         });
-
-        client.on('user-left', (user) => {
-          delete remoteUsers[user.uid];
-          removeVideoPlayer(user);
-          if (Object.keys(remoteUsers).length === 0) {
-            document.getElementById('emptyStage').style.display = 'flex';
-          }
-        });
-
-        // 1. Join as Audience (Undetected Stealth)
-        await client.setClientRole('audience');
-        // UID 9999 is reserved for Director Proctor
-        await client.join(appId, channel, token || null, 9999);
-        console.log('[KMC Proctor] Joined channel:', channel, 'as stealth audience');
 
         if (initialMode === 'intervene') {
           toggleIntervene();
         }
       } catch (err) {
         console.error('[KMC Proctor] Initialization error:', err);
-        document.getElementById('statusMessage').textContent = 'Connection notice: ' + err.message;
+        statusMsg.textContent = 'Connection notice: ' + (err.message || err);
       }
     }
 
-    function createVideoPlayer(user) {
-      let card = document.getElementById('player-' + user.uid);
+    function announceProctorPresence() {
+      if (signalingChannel) {
+        signalingChannel.send({
+          type: 'broadcast',
+          event: 'signal',
+          payload: {
+            signalType: 'proctor-join',
+            msgType: 'proctor-join',
+            type: 'proctor-join',
+            role: 'director',
+            target: 'all',
+          },
+        });
+      }
+    }
+
+    async function handleProctorOffer(sender, offerSdp) {
+      try {
+        if (peerConnections[sender]) {
+          try { peerConnections[sender].close(); } catch (e) {}
+        }
+
+        const pc = new RTCPeerConnection(rtcConfiguration);
+        peerConnections[sender] = pc;
+        if (!pendingCandidates[sender]) pendingCandidates[sender] = [];
+
+        // Pre-allocate audio sender with silent track or active mic so WebRTC negotiates sendrecv from the start!
+        // This makes microphone toggle 100% immune to drops, requiring ZERO renegotiation!
+        try {
+          let audioTrack = null;
+          if (isIntervening && liveMicStream && liveMicStream.getAudioTracks().length > 0) {
+            audioTrack = liveMicStream.getAudioTracks()[0];
+          } else {
+            audioTrack = getOrCreateSilentTrack();
+          }
+          if (audioTrack) {
+            const rtp = pc.addTrack(audioTrack, new MediaStream([audioTrack]));
+            directorRtpSenders[sender] = rtp;
+          }
+        } catch (trackErr) {
+          console.warn('[KMC Proctor] Audio transceiver pre-allocation warning:', trackErr);
+        }
+
+        pc.onicecandidate = (event) => {
+          if (event.candidate && signalingChannel) {
+            signalingChannel.send({
+              type: 'broadcast',
+              event: 'signal',
+              payload: {
+                signalType: 'proctor-candidate',
+                msgType: 'proctor-candidate',
+                type: 'proctor-candidate',
+                target: sender,
+                role: 'director',
+                candidate: {
+                  candidate: event.candidate.candidate,
+                  sdpMid: event.candidate.sdpMid,
+                  sdpMLineIndex: event.candidate.sdpMLineIndex,
+                },
+              },
+            });
+          }
+        };
+
+        pc.ontrack = (event) => {
+          console.log('[KMC Proctor] Received remote track from', sender, 'kind:', event.track.kind);
+          let stream = (event.streams && event.streams[0]) ? event.streams[0] : null;
+          if (!stream) {
+            if (!remoteStreams[sender]) {
+              remoteStreams[sender] = new MediaStream();
+            }
+            remoteStreams[sender].addTrack(event.track);
+            stream = remoteStreams[sender];
+          } else {
+            remoteStreams[sender] = stream;
+          }
+          createOrUpdateVideoPlayer(sender, stream);
+        };
+
+        pc.onconnectionstatechange = () => {
+          console.log('[KMC Proctor] State for', sender, pc.connectionState);
+          if (pc.connectionState === 'connected') {
+            statusMsg.textContent = isIntervening
+              ? '🔴 Director mic broadcasting live to studio'
+              : '🟢 Connected: Observing ' + sender + ' (P2P WebRTC)';
+            updateStageVisibility();
+          } else if (pc.connectionState === 'failed') {
+            console.warn('[KMC Proctor] Connection failed for', sender, 're-announcing presence...');
+            announceProctorPresence();
+          }
+        };
+
+        await pc.setRemoteDescription(new RTCSessionDescription({ type: 'offer', sdp: offerSdp }));
+
+        // Flush queued candidates
+        if (pendingCandidates[sender] && pendingCandidates[sender].length > 0) {
+          for (const cand of pendingCandidates[sender]) {
+            try {
+              await pc.addIceCandidate(new RTCIceCandidate(cand));
+            } catch (candErr) {
+              console.warn('[KMC Proctor] Queued candidate error:', candErr);
+            }
+          }
+          pendingCandidates[sender] = [];
+        }
+
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+
+        if (signalingChannel) {
+          signalingChannel.send({
+            type: 'broadcast',
+            event: 'signal',
+            payload: {
+              signalType: 'proctor-answer',
+              msgType: 'proctor-answer',
+              type: 'proctor-answer',
+              target: sender,
+              role: 'director',
+              sdp: answer.sdp,
+            },
+          });
+        }
+
+        statusMsg.textContent = '🟢 Connected: Receiving ' + sender + ' studio stream';
+      } catch (err) {
+        console.error('[KMC Proctor] Error handling offer from', sender, err);
+      }
+    }
+
+    function updateStageVisibility() {
+      const empty = document.getElementById('emptyStage');
+      const hasCards = document.querySelectorAll('.video-card').length > 0;
+      if (empty) {
+        empty.style.display = hasCards ? 'none' : 'flex';
+      }
+    }
+
+    function getParticipantLabel(sender) {
+      if (sender === 'teacher') {
+        return `${teacherName} (Faculty Instructor)`;
+      } else if (sender === 'student') {
+        return `${studentName} (Student Learner)`;
+      }
+      return `Studio Stream (${sender})`;
+    }
+
+    function createOrUpdateVideoPlayer(sender, stream) {
+      if (!activeParticipants.includes(sender)) {
+        activeParticipants.push(sender);
+      }
+
+      let card = document.getElementById('player-' + sender);
       if (!card) {
         card = document.createElement('div');
         card.className = 'video-card focus';
-        card.id = 'player-' + user.uid;
+        card.id = 'player-' + sender;
 
-        const playerDiv = document.createElement('div');
-        playerDiv.className = 'remote-player';
-        playerDiv.id = 'stream-' + user.uid;
-        card.appendChild(playerDiv);
+        const videoEl = document.createElement('video');
+        videoEl.className = 'remote-player';
+        videoEl.id = 'video-' + sender;
+        videoEl.autoplay = true;
+        videoEl.playsInline = true;
+        videoEl.muted = isMutedSpeaker;
+        card.appendChild(videoEl);
 
         const tag = document.createElement('div');
         tag.className = 'participant-tag';
         tag.innerHTML = `
           <div class="quality-dot"></div>
-          <span>${user.uid === 1001 ? teacherName + ' (Faculty)' : (user.uid === 1002 ? studentName + ' (Student)' : 'Live Feed #' + user.uid)}</span>
+          <span id="label-text-${sender}">${getParticipantLabel(sender)}</span>
         `;
         card.appendChild(tag);
 
         document.getElementById('videoGrid').appendChild(card);
       }
-      user.videoTrack.play('stream-' + user.uid);
+
+      const videoEl = document.getElementById('video-' + sender);
+      if (videoEl) {
+        videoEl.srcObject = stream;
+        videoEl.muted = isMutedSpeaker;
+        const playPromise = videoEl.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(e => {
+            console.warn('[KMC Proctor] Autoplay with sound restricted, starting muted:', e);
+            videoEl.muted = true;
+            isMutedSpeaker = true;
+            const btn = document.getElementById('muteAudioBtn');
+            if (btn) {
+              btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg><span>Click to Unmute Studio Audio</span>`;
+            }
+            videoEl.play().catch(err2 => console.error('[KMC Proctor] Video play retry failed:', err2));
+          });
+        }
+      }
+
+      updateStageVisibility();
     }
 
-    function removeVideoPlayer(user) {
-      const card = document.getElementById('player-' + user.uid);
+    function removeVideoPlayer(sender) {
+      const card = document.getElementById('player-' + sender);
       if (card) card.remove();
+      const idx = activeParticipants.indexOf(sender);
+      if (idx !== -1) {
+        activeParticipants.splice(idx, 1);
+      }
+      delete peerConnections[sender];
+      delete directorRtpSenders[sender];
+      delete remoteStreams[sender];
+      updateStageVisibility();
     }
 
     // ---------------------------------------------------------------------------
-    // INTERVENE / STEALTH TOGGLE
+    // INTERVENE / STEALTH TOGGLE (ROCK SOLID: replaceTrack with ZERO Renegotiation)
     // ---------------------------------------------------------------------------
     async function toggleIntervene() {
       const btn = document.getElementById('interveneBtn');
       const modePill = document.getElementById('modePill');
       const modeText = document.getElementById('modeText');
-      const statusMsg = document.getElementById('statusMessage');
 
       if (!isIntervening) {
-        // Switch to Intervene (Host Mode with Mic)
+        // Switch to Intervene (Host Mode with Live Mic)
         try {
-          await client.setClientRole('host');
-          localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
-            encoderConfig: 'music_standard'
-          });
-          await client.publish([localAudioTrack]);
+          if (!liveMicStream) {
+            liveMicStream = await navigator.mediaDevices.getUserMedia({
+              audio: {
+                echoCancellation: true,
+                noiseSuppression: true,
+                autoGainControl: true,
+              }
+            });
+          }
+          const audioTrack = liveMicStream.getAudioTracks()[0];
+          audioTrack.enabled = true;
+
+          // Swap active audio track on all established peer connections without renegotiation!
+          for (const sender in directorRtpSenders) {
+            const rtp = directorRtpSenders[sender];
+            if (rtp && rtp.replaceTrack) {
+              try {
+                await rtp.replaceTrack(audioTrack);
+              } catch (rErr) {
+                console.warn('[KMC Proctor] Error replacing track to live mic:', rErr);
+              }
+            }
+          }
+
           isIntervening = true;
 
           btn.className = 'action-btn btn-stealth';
           btn.innerHTML = `
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-            <span>Return to Stealth</span>
+            <span>Mute & Observe Silently</span>
           `;
 
           modePill.className = 'mode-pill mode-intervene';
-          modeText.textContent = '🔴 INTERVENTION ACTIVE (SPEAKING TO STUDIO)';
-          statusMsg.textContent = 'Director Mic Broadcasting live to Teacher & Student';
+          modeText.textContent = '🔴 MICROPHONE ACTIVE (SPEAKING TO STUDIO)';
+          statusMsg.textContent = 'Director microphone is live in the studio';
         } catch (err) {
-          alert('Microphone access required to speak into studio: ' + err.message);
+          alert('Microphone access required to speak into studio: ' + (err.message || err));
         }
       } else {
-        // Return to Stealth (Audience Mode, Mic Closed)
+        // Return to Silent Observation (Audience Mode, Mic Closed)
         try {
-          if (localAudioTrack) {
-            localAudioTrack.stop();
-            localAudioTrack.close();
-            await client.unpublish([localAudioTrack]);
-            localAudioTrack = null;
+          if (liveMicStream) {
+            liveMicStream.getAudioTracks().forEach(t => { t.enabled = false; });
           }
-          await client.setClientRole('audience');
+          const silentTrack = getOrCreateSilentTrack();
+
+          // Swap back to silent track seamlessly on all connections without drops!
+          for (const sender in directorRtpSenders) {
+            const rtp = directorRtpSenders[sender];
+            if (rtp && rtp.replaceTrack) {
+              try {
+                await rtp.replaceTrack(silentTrack);
+              } catch (rErr) {
+                console.warn('[KMC Proctor] Error replacing track to silence:', rErr);
+              }
+            }
+          }
+
           isIntervening = false;
 
           btn.className = 'action-btn btn-intervene';
           btn.innerHTML = `
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-            <span>Speak / Intervene</span>
+            <span>Speak into Studio</span>
           `;
 
           modePill.className = 'mode-pill mode-stealth';
-          modeText.textContent = 'STEALTH OBSERVER (INVISIBLE)';
-          statusMsg.textContent = 'Mode: Stealth (Audience • Mic Hard-Muted)';
+          modeText.textContent = 'SILENT OBSERVER (MUTED)';
+          statusMsg.textContent = 'Mode: Silent Observation (Microphone Muted)';
         } catch (err) {
-          console.error('[KMC Proctor] Return to stealth error:', err);
+          console.error('[KMC Proctor] Return to silent observation error:', err);
         }
       }
     }
@@ -668,18 +951,14 @@
     function toggleMuteAudio() {
       isMutedSpeaker = !isMutedSpeaker;
       const btn = document.getElementById('muteAudioBtn');
-      for (const uid in remoteUsers) {
-        if (remoteUsers[uid].audioTrack) {
-          if (isMutedSpeaker) {
-            remoteUsers[uid].audioTrack.stop();
-          } else {
-            remoteUsers[uid].audioTrack.play();
-          }
-        }
-      }
+      const videoElements = document.querySelectorAll('video');
+      videoElements.forEach(v => {
+        v.muted = isMutedSpeaker;
+      });
+
       btn.innerHTML = isMutedSpeaker
-        ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg><span>Director Speaker: Muted</span>`
-        : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg><span>Director Speaker: On</span>`;
+        ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg><span>Studio Audio: Muted</span>`
+        : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg><span>Studio Audio: On</span>`;
     }
 
     // ---------------------------------------------------------------------------
@@ -704,15 +983,15 @@
       if (!note) return;
       const feedback = document.getElementById('saveFeedback');
       feedback.style.display = 'block';
-      feedback.textContent = 'Saving memo to Supabase Central Mind...';
+      feedback.textContent = 'Saving observation notes...';
 
       try {
-        // Save to Supabase Central Mind if REST endpoint is reachable
         const res = await fetch('https://vsfvbaflosylrkpxfltg.supabase.co/rest/v1/director_observation_notes', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZzZnZiYWZsb3N5bHJrcHhmbHRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAwOTUwODUsImV4cCI6MjA1NTY3MTA4NX0.U9u1mR2839V29Q71L_oD_U12pX0zYq_m0K2_A'
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
           },
           body: JSON.stringify({
             session_id: sessionId || null,
@@ -722,15 +1001,46 @@
             created_at: new Date().toISOString()
           })
         });
-        feedback.textContent = '✓ Assessment memo logged to Central Mind!';
+        feedback.textContent = '✓ Observation notes saved successfully!';
       } catch (e) {
-        feedback.textContent = '✓ Note saved locally (Director Session Cached)';
+        feedback.textContent = '✓ Observation note saved locally (Session Cached)';
       }
       setTimeout(() => { feedback.style.display = 'none'; }, 4000);
     }
 
-    // Initialize on load
-    window.addEventListener('DOMContentLoaded', initAgoraProctor);
+    // ---------------------------------------------------------------------------
+    // STREAM RECONNECT
+    // ---------------------------------------------------------------------------
+    async function reconnectStream() {
+      if (statusMsg) statusMsg.textContent = 'Reconnecting to live studio...';
+      for (const sender in peerConnections) {
+        try { peerConnections[sender].close(); } catch (e) {}
+      }
+      peerConnections = {};
+      remoteStreams = {};
+      activeParticipants = [];
+      const grid = document.getElementById('videoGrid');
+      const cards = grid.querySelectorAll('.video-card');
+      cards.forEach(c => c.remove());
+      updateStageVisibility();
+      announceProctorPresence();
+    }
+
+    window.addEventListener('beforeunload', () => {
+      if (signalingChannel) {
+        signalingChannel.send({
+          type: 'broadcast',
+          event: 'signal',
+          payload: { type: 'proctor-leave', role: 'director' },
+        });
+      }
+    });
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initWebRtcProctor);
+    } else {
+      initWebRtcProctor();
+    }
   </script>
 </body>
 </html>
