@@ -637,16 +637,18 @@
             await handleProctorOffer(sender, sdp);
           } else if (signalType === 'proctor-candidate') {
             if (target === 'director' || !target || target === 'all') {
-              const pc = peerConnections[sender];
-              if (pc && pc.remoteDescription) {
-                try {
-                  await pc.addIceCandidate(new RTCIceCandidate(candidate));
-                } catch (cErr) {
-                  console.warn('[KMC Proctor] Candidate add error:', cErr);
+              if (candidate && candidate.candidate) {
+                const pc = peerConnections[sender];
+                if (pc && pc.remoteDescription) {
+                  try {
+                    await pc.addIceCandidate(new RTCIceCandidate(candidate));
+                  } catch (cErr) {
+                    console.warn('[KMC Proctor] Candidate add error:', cErr);
+                  }
+                } else {
+                  if (!pendingCandidates[sender]) pendingCandidates[sender] = [];
+                  pendingCandidates[sender].push(candidate);
                 }
-              } else {
-                if (!pendingCandidates[sender]) pendingCandidates[sender] = [];
-                pendingCandidates[sender].push(candidate);
               }
             }
           }
@@ -657,7 +659,7 @@
           if (status === 'SUBSCRIBED') {
             statusMsg.textContent = isIntervening
               ? '🔴 Director mic broadcasting live to studio'
-              : '🟢 Connected: Silent Observation (WebRTC • ' + channel + ')';
+              : '🟡 Connected to Studio Signaling (' + channel + ') • Scanning for live streams...';
 
             // Announce presence immediately and maintain continuous discovery heartbeat
             announceProctorPresence();
@@ -781,7 +783,9 @@
         if (pendingCandidates[sender] && pendingCandidates[sender].length > 0) {
           for (const cand of pendingCandidates[sender]) {
             try {
-              await pc.addIceCandidate(new RTCIceCandidate(cand));
+              if (cand && cand.candidate) {
+                await pc.addIceCandidate(new RTCIceCandidate(cand));
+              }
             } catch (candErr) {
               console.warn('[KMC Proctor] Queued candidate error:', candErr);
             }
@@ -1055,6 +1059,7 @@
       }
       peerConnections = {};
       remoteStreams = {};
+      pendingCandidates = {};
       activeParticipants = [];
       const grid = document.getElementById('videoGrid');
       const cards = grid.querySelectorAll('.video-card');
@@ -1063,12 +1068,27 @@
       announceProctorPresence();
     }
 
+    document.addEventListener('click', () => {
+      const videos = document.querySelectorAll('video');
+      videos.forEach(v => {
+        if (v.paused) v.play().catch(() => {});
+        if (isMutedSpeaker === false && v.muted) {
+          v.muted = false;
+        }
+      });
+    });
+
     window.addEventListener('beforeunload', () => {
       if (signalingChannel) {
         signalingChannel.send({
           type: 'broadcast',
           event: 'signal',
-          payload: { type: 'proctor-leave', role: 'director' },
+          payload: {
+            signalType: 'proctor-leave',
+            msgType: 'proctor-leave',
+            type: 'proctor-leave',
+            role: 'director',
+          },
         });
       }
     });
