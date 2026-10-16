@@ -8,7 +8,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.min.js"></script>
+  <script>
+    if (!window.supabase) {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"><\/script>');
+    }
+  </script>
   <style>
     :root {
       --bg-dark: #070B10;
@@ -505,9 +510,26 @@
     // ---------------------------------------------------------------------------
     // QUERY PARAMETERS & CONFIGURATION
     // ---------------------------------------------------------------------------
+    function normalizeStudioChannel(chan) {
+      if (!chan) return 'kmc_studio_3';
+      const lower = chan.toLowerCase().trim();
+      if (lower.startsWith('kmc_webrtc_')) return lower.replace('kmc_webrtc_', '');
+      if (lower.includes('studio 3') || lower.includes('studio_3') || lower.includes('yamaha c7') || lower.includes('yamaha c3') || lower.includes('grand')) {
+        return 'kmc_studio_3';
+      }
+      if (lower.includes('studio 1') || lower.includes('studio_1')) return 'kmc_studio_1';
+      if (lower.includes('studio 2') || lower.includes('studio_2')) return 'kmc_studio_2';
+      if (lower.includes('studio 4') || lower.includes('studio_4')) return 'kmc_studio_4';
+      if (lower.includes('sound lab') || lower.includes('lab 1')) return 'kmc_sound_lab_1';
+      if (lower.includes('main hall') || lower.includes('hall')) return 'kmc_main_hall';
+      const clean = lower.replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_').replace(/^_+|_+$/g, '');
+      return clean.startsWith('kmc_') ? clean : 'kmc_' + clean;
+    }
+
     const params = new URLSearchParams(window.location.search);
     const appId = params.get('appId') || 'cdc6011254554a2bb8c2febe29b85af2';
-    const channel = params.get('channel') || 'kmc_studio_3';
+    const rawChannel = params.get('channel') || 'kmc_studio_3';
+    const channel = normalizeStudioChannel(rawChannel);
     const token = params.get('token') || '';
     const initialMode = params.get('mode') || 'stealth';
     const teacherName = params.get('teacher') || 'David Otieno (Senior Faculty)';
@@ -518,7 +540,7 @@
 
     // Populate UI Tags
     document.getElementById('courseTitle').textContent = courseTitle;
-    document.getElementById('studioBadge').textContent = studioRoom;
+    document.getElementById('studioBadge').textContent = `${studioRoom} (${channel})`;
     document.getElementById('teacherBadge').textContent = teacherName;
     document.getElementById('studentBadge').textContent = studentName;
 
@@ -550,6 +572,7 @@
     let silentAudioTrack = null;
     let isMutedSpeaker = false;
     let activeParticipants = [];
+    let presenceHeartbeatInterval = null;
 
     const statusMsg = document.getElementById('statusMessage');
 
@@ -576,6 +599,15 @@
       return silentAudioTrack;
     }
 
+    function startPresenceHeartbeat() {
+      if (presenceHeartbeatInterval) clearInterval(presenceHeartbeatInterval);
+      presenceHeartbeatInterval = setInterval(() => {
+        if (activeParticipants.length < 2) {
+          announceProctorPresence();
+        }
+      }, 2500);
+    }
+
     async function initWebRtcProctor() {
       try {
         statusMsg.textContent = 'Connecting to studio signaling: ' + channel + '...';
@@ -585,8 +617,7 @@
         }
 
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const sanitizedChannel = channel.replace(/[^a-zA-Z0-9_]/g, '_');
-        const realtimeChannelName = 'kmc_webrtc_' + sanitizedChannel;
+        const realtimeChannelName = 'kmc_webrtc_' + channel;
 
         signalingChannel = supabaseClient.channel(realtimeChannelName);
 
@@ -626,13 +657,11 @@
           if (status === 'SUBSCRIBED') {
             statusMsg.textContent = isIntervening
               ? '🔴 Director mic broadcasting live to studio'
-              : '🟢 Connected: Silent Observation (WebRTC • P2P)';
+              : '🟢 Connected: Silent Observation (WebRTC • ' + channel + ')';
 
-            // Announce presence to studio peers with retries
+            // Announce presence immediately and maintain continuous discovery heartbeat
             announceProctorPresence();
-            setTimeout(announceProctorPresence, 1000);
-            setTimeout(announceProctorPresence, 2500);
-            setTimeout(announceProctorPresence, 5000);
+            startPresenceHeartbeat();
           } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
             statusMsg.textContent = 'Signaling disconnected. Click Reconnect.';
           }
@@ -672,23 +701,6 @@
         const pc = new RTCPeerConnection(rtcConfiguration);
         peerConnections[sender] = pc;
         if (!pendingCandidates[sender]) pendingCandidates[sender] = [];
-
-        // Pre-allocate audio sender with silent track or active mic so WebRTC negotiates sendrecv from the start!
-        // This makes microphone toggle 100% immune to drops, requiring ZERO renegotiation!
-        try {
-          let audioTrack = null;
-          if (isIntervening && liveMicStream && liveMicStream.getAudioTracks().length > 0) {
-            audioTrack = liveMicStream.getAudioTracks()[0];
-          } else {
-            audioTrack = getOrCreateSilentTrack();
-          }
-          if (audioTrack) {
-            const rtp = pc.addTrack(audioTrack, new MediaStream([audioTrack]));
-            directorRtpSenders[sender] = rtp;
-          }
-        } catch (trackErr) {
-          console.warn('[KMC Proctor] Audio transceiver pre-allocation warning:', trackErr);
-        }
 
         pc.onicecandidate = (event) => {
           if (event.candidate && signalingChannel) {
@@ -739,9 +751,33 @@
           }
         };
 
+        // 1. Set Remote Description FIRST so incoming m-sections (video & audio) are fully instantiated in order
         await pc.setRemoteDescription(new RTCSessionDescription({ type: 'offer', sdp: offerSdp }));
 
-        // Flush queued candidates
+        // 2. Configure audio transceiver for Director talkback without altering m-section positions
+        try {
+          const transceivers = pc.getTransceivers ? pc.getTransceivers() : [];
+          const audioTransceiver = transceivers.find(t => t.receiver && t.receiver.track && t.receiver.track.kind === 'audio');
+          
+          let audioTrack = (isIntervening && liveMicStream && liveMicStream.getAudioTracks().length > 0)
+            ? liveMicStream.getAudioTracks()[0]
+            : getOrCreateSilentTrack();
+
+          if (audioTransceiver) {
+            audioTransceiver.direction = 'sendrecv';
+            if (audioTrack) {
+              await audioTransceiver.sender.replaceTrack(audioTrack);
+            }
+            directorRtpSenders[sender] = audioTransceiver.sender;
+          } else if (audioTrack) {
+            const rtp = pc.addTrack(audioTrack, new MediaStream([audioTrack]));
+            directorRtpSenders[sender] = rtp;
+          }
+        } catch (trackErr) {
+          console.warn('[KMC Proctor] Audio transceiver configuration warning:', trackErr);
+        }
+
+        // 3. Flush any queued ICE candidates
         if (pendingCandidates[sender] && pendingCandidates[sender].length > 0) {
           for (const cand of pendingCandidates[sender]) {
             try {
@@ -753,6 +789,7 @@
           pendingCandidates[sender] = [];
         }
 
+        // 4. Create Answer and Send Back to Mobile Peer
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
 
