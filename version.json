@@ -1,7 +1,7 @@
 {
-  "latest_version": "1.0.15",
-  "latest_build_number": 22,
-  "apk_url": "https://github.com/kmcdata25-netizen/kasarani-app-releases/releases/download/v1.0.15/Kasarani_Music_Center_v1.0.15_b22.apk",
-  "release_notes": "v1.0.15+22 - Embedded Live Teacher Camera Banner & WebRTC Proctor Synchronization\n- Embedded real-time teacher camera live stream directly on student dashboard banner\n- 1-click seamless studio classroom entry (CLICK TO ENTER STUDIO)\n- Zero-permission receive-only preview mode on student dashboard\n- Director Proctor live observation and talkback candidate synchronization\n- Preserved acoustic music audio profile (Opus Stereo 48kHz, disabled ANC/AGC)",
+  "latest_version": "1.0.19",
+  "latest_build_number": 26,
+  "apk_url": "https://github.com/kmcdata25-netizen/kasarani-app-releases/releases/download/v1.0.19/Kasarani_Music_Center_v1.0.19_b26.apk",
+  "release_notes": "v1.0.19+26 - Live Cloudflare R2 Promotional Poster Overlay on App Launch\n- Completely purged legacy hardcoded store popup dialog from landing screen\n- Wired live Cloudflare R2 promotional poster overlay on app launch with dynamic CTA routing\n- Supports high-resolution poster display with instant enrollment / catalog navigation\n- 0 issues found across static analyzer",
   "force_update": false
 }
