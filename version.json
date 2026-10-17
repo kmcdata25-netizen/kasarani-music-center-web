@@ -1,7 +1,7 @@
 {
-  "latest_version": "1.0.20",
-  "latest_build_number": 27,
-  "apk_url": "https://github.com/kmcdata25-netizen/kasarani-app-releases/releases/download/v1.0.20/Kasarani_Music_Center_v1.0.20_b27.apk",
-  "release_notes": "v1.0.20+27 - Full Uncropped Promotional Poster with Smooth Downward Gradient Fade & Complete Mock Data Eradication\n- Poster image now displays in full uncropped aspect ratio with smooth scrollability\n- Elegant downward gradient fade overlaid with description, prominent CTA button, and Maybe Later button\n- Purged all legacy teaser bottom sheets from landing screen\n- Eradicated all remaining synthetic faculty names and mock data fallbacks\n- 0 issues found across static analyzer",
+  "latest_version": "1.0.21",
+  "latest_build_number": 28,
+  "apk_url": "https://github.com/kmcdata25-netizen/kasarani-app-releases/releases/download/v1.0.21/Kasarani_Music_Center_v1.0.21_b28.apk",
+  "release_notes": "v1.0.21+28 - 100% Mock Data Purge, Academic Progress Overhaul & Strict Supabase Canonical Ground Truth\n- Eradicated all synthetic multipliers (0.65 progress) and hardcoded metric cards across Academic & Profile\n- Replaced static curriculum modules with live Supabase lessons streaming from database\n- Fixed cache sync to treat Supabase as single source of truth; deleting records immediately clears local app\n- One-time automated purge of stale demo SharedPreferences on app launch\n- Zero static analysis issues found",
   "force_update": false
 }
