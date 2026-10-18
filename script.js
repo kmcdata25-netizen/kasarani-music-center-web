@@ -85,8 +85,8 @@
       },
       {
         id: 'piano',
-        keywords: ['piano', 'keyboard', 'keys', 'jazz piano', 'contemporary keys', 'mwangi'],
-        answer: 'Our Piano Department is led by Prof. J. Mwangi. We cover hand independence, rootless jazz voicings (Type A/B shells), contemporary gospel movements (2-5-1, 7-3-6), and ABRSM / Trinity practical grade exam preparation (Grades 1–8).'
+        keywords: ['piano', 'keyboard', 'keys', 'jazz piano', 'contemporary keys'],
+        answer: 'Our Piano & Keyboard Department covers hand independence, rootless jazz voicings (Type A/B shells), contemporary gospel movements (2-5-1, 7-3-6), and ABRSM / Trinity practical grade exam preparation (Grades 1–8).'
       },
       {
         id: 'guitar',
@@ -101,12 +101,12 @@
       {
         id: 'drums',
         keywords: ['drum', 'drums', 'drumming', 'percussion', 'rhythm', 'beat'],
-        answer: 'Mentored by the Nairobi Rhythm Section, students master traditional East African polyrhythms, four-way limb independence, paradiddle rudiments, and playing with metronome click tracks.'
+        answer: 'Our Drums & Percussion faculty guides students through traditional East African polyrhythms, four-way limb independence, paradiddle rudiments, and playing with metronome click tracks.'
       },
       {
         id: 'production',
         keywords: ['production', 'audio', 'sound engineering', 'recording', 'mixing', 'mastering', 'studio', 'fl studio', 'logic'],
-        answer: 'Spearheaded by Studio Director Kimani: acoustic tracking, multi-microphone placement, signal flow, EQ, compression, stem mixing, and digital mastering for streaming platforms in our professional studio.'
+        answer: 'Our Music Production & Sound Engineering studio curriculum covers acoustic tracking, multi-microphone placement, signal flow, EQ, compression, stem mixing, and digital mastering for streaming platforms.'
       },
       {
         id: 'exams',
@@ -121,7 +121,7 @@
       {
         id: 'app',
         keywords: ['app', 'student app', 'apk', 'download', 'android', 'live class', 'virtual', 'online lesson', 'masterclass', 'features', 'tuner', 'metronome'],
-        answer: 'The KMC Android Student App (v1.0.10) is your complete pocket conservatory:\n• Native Live Virtual Studio: Join real-time interactive masterclasses powered by custom Agora RTC with 48kHz acoustic audio & Raise Hand live participation\n• Direct M-Pesa Checkout: Instant fee settlements via Safaricom Daraja STK Push with downloadable branded PDF receipts\n• Musician Tools: Built-in precision chromatic tuner and multi-tempo digital metronome\n• Curriculum Tracking: ABRSM & Trinity syllabus progression and weekly teacher evaluation notes\n• Real-time Academy Alerts: Direct notifications for live classes and school bulletins.\nDownload the official APK directly from this page!'
+        answer: 'The KMC Android Student App (v1.0.21) is your complete pocket conservatory:\n• Native Live Virtual Studio: Join real-time interactive masterclasses powered by pure P2P WebRTC with 48kHz stereo acoustic audio & Raise Hand live participation\n• Direct M-Pesa Checkout: Instant fee settlements via Safaricom Daraja STK Push with downloadable branded PDF receipts\n• Musician Tools: Built-in precision chromatic tuner and multi-tempo digital metronome\n• Curriculum Tracking: ABRSM & Trinity syllabus progression and weekly teacher evaluation notes\n• Real-time Academy Alerts: Direct notifications for live classes and school bulletins.\nDownload the official APK directly from this page!'
       },
       {
         id: 'contact',
@@ -179,11 +179,11 @@
       const systemInstruction = 
         'You are "Maestro", the friendly, knowledgeable, and inspiring AI Music Tutor for Kasarani Music Center (KMC) in Nairobi, Kenya. ' +
         'Tagline: "Passion to Profession". Location: Kasarani, Nairobi (off Thika Road corridor). Email: kmcdata25@gmail.com. ' +
-        'Faculty & Disciplines: Piano & Keys (Prof. J. Mwangi), Guitar & Strings, Vocal Coaching, African Percussion & Drums (Nairobi Rhythm Section), ' +
-        'Music Production & Sound Engineering (Studio Director Kimani), DJ Arts, Music Theory (Dean Wanjala), African Dance. ' +
+        'Disciplines: Piano & Keys, Guitar & Strings, Vocal Coaching, African Percussion & Drums, ' +
+        'Music Production & Sound Engineering, DJ Arts, Music Theory, African Dance. ' +
         'Fees: 1-on-1 private lesson KSh 1,000/hr, 4-session starter bundle KSh 3,800, full term courses KSh 8,000–20,000. ' +
         'Exams: ABRSM, Trinity, Rockschool. Payments via M-Pesa. Open Monday-Saturday 8 AM - 7 PM. ' +
-        'Student App: Official Android app v1.0.10 (Build 15) features custom Agora RTC live virtual masterclasses with Raise Hand mode, in-app M-Pesa payment with PDF receipts, tuner, metronome, and syllabus tracking. ' +
+        'Student App: Official Android app v1.0.21 (Build 28) features native P2P WebRTC live virtual masterclasses with 48kHz stereo acoustic audio and Raise Hand mode, in-app M-Pesa payment with PDF receipts, tuner, metronome, and syllabus tracking. ' +
         'Provide helpful, inspiring, concise answers. Avoid decorative emojis.';
 
       const payload = {
